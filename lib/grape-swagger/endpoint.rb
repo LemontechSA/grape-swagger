@@ -211,7 +211,7 @@ module Grape
         next if memo.key?(204)
         next unless !response_model.start_with?('Swagger_doc') && (@definitions[response_model] || value[:model])
 
-        @definitions[response_model][:description] = description_object(route)
+        @definitions[response_model][:description] = memo[value[:code]][:description] || description_object(route)
         # TODO: proof that the definition exist, if model isn't specified
         reference = { '$ref' => "#/definitions/#{response_model}" }
         memo[value[:code]][:schema] = if route.options[:is_array] && value[:code] < 300
