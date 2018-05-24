@@ -25,6 +25,12 @@ module GrapeSwagger
           translate "#{base}.#{clean_path(route)}.detail"
         end
 
+        def param(route, param, options = {})
+          base = prefix(options)
+
+          translate "#{base}.#{clean_path(route)}.parameters.#{param}"
+        end
+
         private
 
         def translate(value)

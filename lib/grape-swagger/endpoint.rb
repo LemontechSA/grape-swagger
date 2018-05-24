@@ -118,7 +118,7 @@ module Grape
       method[:description] = description_object(route, options)
       method[:produces]    = produces_object(route, options[:produces] || options[:format])
       method[:consumes]    = consumes_object(route, options[:format])
-      method[:parameters]  = params_object(route, path)
+      method[:parameters]  = params_object(route, path, options)
       method[:security]    = security_object(route)
       method[:responses]   = response_object(route)
       method[:tags]        = route.options.fetch(:tags, tag_object(route, path))
@@ -164,7 +164,7 @@ module Grape
       mime_types
     end
 
-    def params_object(route, path)
+    def params_object(route, path, options)
       parameters = partition_params(route).map do |param, value|
         value = { required: false }.merge(value) if value.is_a?(Hash)
         _, value = default_type([[param, value]]).first if value == ''
@@ -173,7 +173,7 @@ module Grape
         elsif value[:documentation]
           expose_params(value[:documentation][:type])
         end
-        GrapeSwagger::DocMethods::ParseParams.call(param, value, path, route, @definitions)
+        GrapeSwagger::DocMethods::ParseParams.call(param, value, path, route, @definitions, options)
       end
 
       if GrapeSwagger::DocMethods::MoveParams.can_be_moved?(parameters, route.request_method)

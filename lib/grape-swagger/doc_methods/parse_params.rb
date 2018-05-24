@@ -4,7 +4,7 @@ module GrapeSwagger
   module DocMethods
     class ParseParams
       class << self
-        def call(param, settings, path, route, definitions)
+        def call(param, settings, path, route, definitions, options)
           method = route.request_method
           additional_documentation = settings.fetch(:documentation, {})
           settings.merge!(additional_documentation)
@@ -19,7 +19,7 @@ module GrapeSwagger
           }
 
           # optional properties
-          document_description(settings)
+          document_description(settings, route, param, options)
           document_type_and_format(settings, data_type)
           document_array_param(value_type, definitions) if value_type[:is_array]
           document_default_value(settings)
@@ -31,9 +31,9 @@ module GrapeSwagger
 
         private
 
-        def document_description(settings)
+        def document_description(settings, route, param, options)
           description = settings[:desc] || settings[:description]
-          @parsed_param[:description] = description if description
+          @parsed_param[:description] = description || Translate.param(route, param, options)
         end
 
         def document_required(settings)
