@@ -97,7 +97,7 @@ module Grape
       routes.each do |route|
         next if hidden?(route, options)
 
-        @item, path, i18n_path = GrapeSwagger::DocMethods::PathString.build(route, options)
+        @item, path = GrapeSwagger::DocMethods::PathString.build(route, options)
         @entity = route.entity || route.options[:success]
 
         verb, method_object = method_object(route, options, path)
@@ -114,8 +114,8 @@ module Grape
 
     def method_object(route, options, path)
       method = {}
-      method[:summary]     = summary_object(route)
-      method[:description] = description_object(route)
+      method[:summary]     = summary_object(route, options)
+      method[:description] = description_object(route, options)
       method[:produces]    = produces_object(route, options[:produces] || options[:format])
       method[:consumes]    = consumes_object(route, options[:format])
       method[:parameters]  = params_object(route, path)
@@ -132,19 +132,12 @@ module Grape
       route.options[:security] if route.options.key?(:security)
     end
 
-    def summary_object(route)
-      summary = route.options[:desc] if route.options.key?(:desc)
-      summary = route.description if route.description.present?
-      summary = route.options[:summary] if route.options.key?(:summary)
-
-      summary
+    def summary_object(route, options)
+      GrapeSwagger::DocMethods::Translate.summary(route, options)
     end
 
-    def description_object(route)
-      description = route.description if route.description.present?
-      description = route.options[:detail] if route.options.key?(:detail)
-
-      description
+    def description_object(route, options)
+      GrapeSwagger::DocMethods::Translate.description(route, options)
     end
 
     def produces_object(route, format)

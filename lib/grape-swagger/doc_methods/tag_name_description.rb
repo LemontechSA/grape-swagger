@@ -4,28 +4,19 @@ module GrapeSwagger
   module DocMethods
     class TagNameDescription
       class << self
-        def build(paths)
+        def build(paths, options)
           paths.values.each_with_object([]) do |path, memo|
             tags = path.values.first[:tags]
 
             case tags
             when String
-              memo << build_memo(tags)
+              memo << Translate.tag(options, tags)
             when Array
               path.values.first[:tags].each do |tag|
-                memo << build_memo(tag)
+                memo << Translate.tag(options, tag)
               end
             end
           end.uniq
-        end
-
-        private
-
-        def build_memo(tag)
-          {
-            name: tag,
-            description: "Operations about #{tag.pluralize}"
-          }
         end
       end
     end

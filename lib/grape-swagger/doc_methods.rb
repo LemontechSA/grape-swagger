@@ -98,6 +98,7 @@ module GrapeSwagger
         add_version: true,
         hide_documentation_path: true,
         format: :json,
+        i18n_scope: :api,
         authorizations: nil,
         security_definitions: nil,
         security: nil,
@@ -116,7 +117,7 @@ module GrapeSwagger
     end
 
     def tags_from(paths, options)
-      tags = GrapeSwagger::DocMethods::TagNameDescription.build(paths)
+      tags = GrapeSwagger::DocMethods::TagNameDescription.build(paths, options)
 
       if options[:tags]
         names = options[:tags].map { |t| t[:name] }
