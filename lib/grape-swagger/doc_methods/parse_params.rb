@@ -33,7 +33,7 @@ module GrapeSwagger
 
         def document_description(settings, route, param, options)
           description = settings[:desc] || settings[:description]
-          @parsed_param[:description] = description || Translate.param(route, param, options)
+          @parsed_param[:description] = Translate.param(route, param, options) || description
         end
 
         def document_required(settings)

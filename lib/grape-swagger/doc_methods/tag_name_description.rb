@@ -10,13 +10,22 @@ module GrapeSwagger
 
             case tags
             when String
-              memo << Translate.tag(options, tags)
+              memo << build_memo(tags, options)
             when Array
               path.values.first[:tags].each do |tag|
-                memo << Translate.tag(options, tag)
+                memo << build_memo(tag, options)
               end
             end
           end.uniq
+        end
+
+        private
+
+        def build_memo(tag, options)
+          {
+            name: tag,
+            description: Translate.tag(tag, options) || "Operations about #{tag.pluralize}"
+          }
         end
       end
     end

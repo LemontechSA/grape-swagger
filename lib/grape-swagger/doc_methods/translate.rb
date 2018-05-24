@@ -4,37 +4,30 @@ module GrapeSwagger
   module DocMethods
     class Translate
       class << self
-        def tag(options, tag)
-          description = translate "#{prefix(options)}.#{tag.pluralize}.desc"
-
-          {
-            name: tag,
-            description: description
-          }
+        def tag(tag, options)
+          translate "#{prefix(options)}.#{tag.pluralize}.desc"
         end
 
-        def summary(route, options = {})
-          base = prefix(options)
-
-          translate "#{base}.#{clean_path(route)}.desc"
+        def summary(route, options)
+          translate "#{base(route, options)}.desc"
         end
 
-        def description(route, options = {})
-          base = prefix(options)
-
-          translate "#{base}.#{clean_path(route)}.detail"
+        def description(route, options)
+          translate "#{base(route, options)}.detail"
         end
 
-        def param(route, param, options = {})
-          base = prefix(options)
-
-          translate "#{base}.#{clean_path(route)}.parameters.#{param}"
+        def param(route, param, options)
+          translate "#{base(route, options)}.parameters.#{param}"
         end
 
         private
 
         def translate(value)
-          I18n.t(value, default: '')
+          I18n.t(value, default: nil)
+        end
+
+        def base(route, options)
+          "#{prefix(options)}.#{clean_path(route)}"
         end
 
         def prefix(options)

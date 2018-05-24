@@ -133,11 +133,18 @@ module Grape
     end
 
     def summary_object(route, options)
-      GrapeSwagger::DocMethods::Translate.summary(route, options)
+      summary = route.options[:desc] if route.options.key?(:desc)
+      summary = route.description if route.description.present?
+      summary = route.options[:summary] if route.options.key?(:summary)
+
+      GrapeSwagger::DocMethods::Translate.summary(route, options) || summary
     end
 
     def description_object(route, options)
-      GrapeSwagger::DocMethods::Translate.description(route, options)
+      description = route.description if route.description.present?
+      description = route.options[:detail] if route.options.key?(:detail)
+
+      GrapeSwagger::DocMethods::Translate.description(route, options) || description
     end
 
     def produces_object(route, format)
