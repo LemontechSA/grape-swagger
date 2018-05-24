@@ -97,7 +97,7 @@ module Grape
       routes.each do |route|
         next if hidden?(route, options)
 
-        @item, path = GrapeSwagger::DocMethods::PathString.build(route, options)
+        @item, path, i18n_path = GrapeSwagger::DocMethods::PathString.build(route, options)
         @entity = route.entity || route.options[:success]
 
         verb, method_object = method_object(route, options, path)

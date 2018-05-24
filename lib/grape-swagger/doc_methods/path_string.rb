@@ -27,7 +27,9 @@ module GrapeSwagger
 
           path = "#{OptionalObject.build(:base_path, options)}#{path}" if options[:add_base_path]
 
-          [item, path.start_with?('/') ? path : "/#{path}"]
+          i18n_path = Translate.translate path, route.request_method
+
+          [item, path.start_with?('/') ? path : "/#{path}", i18n_path]
         end
       end
     end
