@@ -20,6 +20,10 @@ module GrapeSwagger
           translate "#{base(route, options)}.parameters.#{param}"
         end
 
+        def response(route, code, options)
+          translate "#{base(route, options)}.responses.#{code}.message"
+        end
+
         private
 
         def translate(value)

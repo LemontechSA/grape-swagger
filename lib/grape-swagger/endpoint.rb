@@ -120,7 +120,7 @@ module Grape
       method[:consumes]    = consumes_object(route, options[:format])
       method[:parameters]  = params_object(route, path, options)
       method[:security]    = security_object(route)
-      method[:responses]   = response_object(route)
+      method[:responses]   = response_object(route, options)
       method[:tags]        = route.options.fetch(:tags, tag_object(route, path))
       method[:operationId] = GrapeSwagger::DocMethods::OperationId.build(route, path)
       method.delete_if { |_, value| value.blank? }
@@ -190,11 +190,17 @@ module Grape
       parameters
     end
 
-    def response_object(route)
+    def response_object(route, options)
       codes = (route.http_codes || route.options[:failure] || [])
 
-      codes = apply_success_codes(route) + codes
-      codes.map! { |x| x.is_a?(Array) ? { code: x[0], message: x[1], model: x[2] } : x }
+      codes = apply_success_codes(route, options) + codes
+      codes.map! do |x|
+        x.is_a?(Array) ? {
+          code: x[0],
+          message: GrapeSwagger::DocMethods::Translate.response(route, x[0], options) || x[1],
+          model: x[2]
+        } : x
+      end
 
       codes.each_with_object({}) do |value, memo|
         memo[value[:code]] = { description: value[:message] }
@@ -222,16 +228,16 @@ module Grape
       end
     end
 
-    def apply_success_codes(route)
+    def apply_success_codes(route, options)
       default_code = GrapeSwagger::DocMethods::StatusCodes.get[route.request_method.downcase.to_sym]
       if @entity.is_a?(Hash)
         default_code[:code] = @entity[:code] if @entity[:code].present?
         default_code[:model] = @entity[:model] if @entity[:model].present?
-        default_code[:message] = @entity[:message] || route.description || default_code[:message].sub('{item}', @item)
+        default_code[:message] = GrapeSwagger::DocMethods::Translate.response(route, default_code[:code], options) || @entity[:message] || route.description || default_code[:message].sub('{item}', @item)
       else
         default_code = GrapeSwagger::DocMethods::StatusCodes.get[route.request_method.downcase.to_sym]
         default_code[:model] = @entity if @entity
-        default_code[:message] = route.description || default_code[:message].sub('{item}', @item)
+        default_code[:message] = GrapeSwagger::DocMethods::Translate.response(route, default_code, options) || route.description || default_code[:message].sub('{item}', @item)
       end
 
       [default_code]
