@@ -49,7 +49,7 @@ module GrapeSwagger
           # always remove base
           path.gsub!(/^(\/(\w+|:\w+)){2}\//, '')
 
-          # add mehtod to path
+          # add method to path
           path.sub!(/^(\w+)\//, '\0{method}/')
           path.sub!(/^(\w+)$/, '\0/{method}')
 
