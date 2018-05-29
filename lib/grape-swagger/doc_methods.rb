@@ -13,6 +13,7 @@ require 'grape-swagger/doc_methods/move_params'
 require 'grape-swagger/doc_methods/headers'
 require 'grape-swagger/doc_methods/build_model_definition'
 require 'grape-swagger/doc_methods/version'
+require 'grape-swagger/doc_methods/translate'
 
 module GrapeSwagger
   module DocMethods
@@ -97,6 +98,7 @@ module GrapeSwagger
         add_version: true,
         hide_documentation_path: true,
         format: :json,
+        i18n_scope: :api,
         authorizations: nil,
         security_definitions: nil,
         security: nil,
@@ -115,7 +117,7 @@ module GrapeSwagger
     end
 
     def tags_from(paths, options)
-      tags = GrapeSwagger::DocMethods::TagNameDescription.build(paths)
+      tags = GrapeSwagger::DocMethods::TagNameDescription.build(paths, options)
 
       if options[:tags]
         names = options[:tags].map { |t| t[:name] }
